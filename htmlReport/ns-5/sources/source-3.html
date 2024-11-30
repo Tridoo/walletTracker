@@ -1,0 +1,309 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > WalletController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.tridoo.wallettracker.wallet</a>
+</div>
+
+<h1>Coverage Summary for Class: WalletController (com.tridoo.wallettracker.wallet)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WalletController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (8/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,2%
+  </span>
+  <span class="absValue">
+    (46/104)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.tridoo.wallettracker.wallet;
+&nbsp;
+&nbsp;import android.content.Context;
+&nbsp;import android.util.Log;
+&nbsp;import android.view.View;
+&nbsp;import android.widget.*;
+&nbsp;import com.tridoo.wallettracker.*;
+&nbsp;import com.tridoo.wallettracker.common.TransactionDto;
+&nbsp;import com.tridoo.wallettracker.stock.StockReader;
+&nbsp;import com.tridoo.wallettracker.stock.StockReaderImpl;
+&nbsp;import com.tridoo.wallettracker.view.PopupOpenerListener;
+&nbsp;import org.jetbrains.annotations.NotNull;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;public class WalletController {
+&nbsp;
+&nbsp;    private WalletRepo repo;
+&nbsp;    private final StockReader stockReader;
+&nbsp;
+&nbsp;    private final Context context;
+&nbsp;
+&nbsp;    private View view;
+&nbsp;
+&nbsp;    private boolean isFilled;
+&nbsp;    private final PopupOpenerListener clickListener;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public WalletController(Context context) {</b>
+<b class="fc">&nbsp;        this.context = context;</b>
+<b class="fc">&nbsp;        repo = new WalletRepoImpl(context);</b>
+<b class="fc">&nbsp;        stockReader = new StockReaderImpl();</b>
+<b class="fc">&nbsp;        clickListener = new PopupOpenerListener(context, this, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setView(View view) {
+<b class="fc">&nbsp;        this.view = view;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //4 test
+&nbsp;    public void setRepo(WalletRepo repo) {
+<b class="fc">&nbsp;        this.repo = repo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void fillView() {
+<b class="nc">&nbsp;        if (isFilled) {</b>
+&nbsp;            //oszczêdnoœæ wywo³añ API
+<b class="nc">&nbsp;            refreshViewOffline();</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        TableLayout table = view.findViewById(R.id.tab_wallet);</b>
+<b class="nc">&nbsp;        if (table.getChildCount() &gt; 1)</b>
+<b class="nc">&nbsp;            table.removeViews(1, table.getChildCount() - 1);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;WalletDto&gt; walletData = getWalletViewData();</b>
+<b class="nc">&nbsp;        walletData.forEach(dto -&gt; addTableRow(table, dto));</b>
+&nbsp;
+<b class="nc">&nbsp;        fillBalance(view, walletData);</b>
+<b class="nc">&nbsp;        isFilled = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void refreshViewOffline() {
+<b class="fc">&nbsp;        TableLayout table = view.findViewById(R.id.tab_wallet);</b>
+<b class="fc">&nbsp;        if (table.getChildCount() &gt; 1)</b>
+<b class="nc">&nbsp;            table.removeViews(1, table.getChildCount() - 1);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;WalletEntry&gt; wallet = repo.getWallet();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;WalletDto&gt; walletData = wallet.stream()</b>
+<b class="fc">&nbsp;                .map(entry -&gt; new WalletDto(entry.getCurrencyId(), entry.getQuantity(), entry.getAvgPrice(),</b>
+<b class="nc">&nbsp;                        Optional.ofNullable(PricesHolder.getInstance().getPrice(entry.getCurrencyId()))))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        walletData.forEach(dto -&gt; addTableRow(table, dto));</b>
+&nbsp;
+<b class="fc">&nbsp;        fillBalance(view, walletData);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;WalletDto&gt; getWalletViewData() {
+<b class="nc">&nbsp;        List&lt;WalletDto&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;WalletEntry&gt; wallet = repo.getWallet();</b>
+<b class="nc">&nbsp;        Set&lt;String&gt; cryptoIds = wallet.stream()</b>
+<b class="nc">&nbsp;                .map(WalletEntry::getCurrencyId)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toSet());</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, BigDecimal&gt; workerResult = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        Thread worker = new Thread(new WalletWorker(stockReader, cryptoIds, workerResult));</b>
+<b class="nc">&nbsp;        worker.start();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            worker.join();</b>
+<b class="nc">&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;            Log.e(WalletController.class.getName(), e.getMessage(), e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        for (WalletEntry entry : wallet) {</b>
+<b class="nc">&nbsp;            Optional&lt;BigDecimal&gt; price = Optional.ofNullable(workerResult.get(entry.getCurrencyId()));</b>
+<b class="nc">&nbsp;            PricesHolder.getInstance().addPrice(entry.getCurrencyId(), price.orElse(BigDecimal.ZERO));</b>
+<b class="nc">&nbsp;            result.add(new WalletDto(entry.getCurrencyId(), entry.getQuantity(), entry.getAvgPrice(), price));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void buy(View popupView, boolean refreshView) {
+<b class="fc">&nbsp;        BigDecimal amount = getBigDecimalFromView(popupView, R.id.et_amount);</b>
+<b class="fc">&nbsp;        if (amount.equals(BigDecimal.ZERO)) return;</b>
+&nbsp;
+<b class="fc">&nbsp;        BigDecimal quantity = getBigDecimalFromView(popupView, R.id.et_quantity);</b>
+<b class="fc">&nbsp;        BigDecimal price = getBigDecimalFromView(popupView, R.id.et_price);</b>
+&nbsp;
+<b class="fc">&nbsp;        TextView tvId = popupView.findViewById(R.id.tv_id);</b>
+<b class="fc">&nbsp;        String currencyId = tvId.getText().toString();</b>
+&nbsp;
+<b class="fc">&nbsp;        PricesHolder.getInstance().addPrice(currencyId, price);</b>
+<b class="fc">&nbsp;        repo.addTransaction(currencyId, quantity, amount);</b>
+<b class="fc">&nbsp;        repo.updateWalletEntry(currencyId, quantity, amount);</b>
+<b class="fc">&nbsp;        if (refreshView) refreshViewOffline();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void sell(View popupView, boolean refreshView) {
+<b class="fc">&nbsp;        BigDecimal amount = getBigDecimalFromView(popupView, R.id.et_amount);</b>
+<b class="fc">&nbsp;        if (amount.equals(BigDecimal.ZERO)) return;</b>
+&nbsp;
+<b class="fc">&nbsp;        BigDecimal quantity = getBigDecimalFromView(popupView, R.id.et_quantity);</b>
+<b class="fc">&nbsp;        BigDecimal price = getBigDecimalFromView(popupView, R.id.et_price);</b>
+&nbsp;
+<b class="fc">&nbsp;        TextView tvId = popupView.findViewById(R.id.tv_id);</b>
+<b class="fc">&nbsp;        String currencyId = tvId.getText().toString();</b>
+&nbsp;
+<b class="fc">&nbsp;        PricesHolder.getInstance().addPrice(currencyId, price);</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;WalletEntry&gt; entry = repo.getWallet().stream().filter(e -&gt; e.getCurrencyId().equals(currencyId)).findAny();</b>
+<b class="fc">&nbsp;        if (!entry.isPresent()) return;</b>
+<b class="fc">&nbsp;        BigDecimal walletQuantity = entry.get().getQuantity();</b>
+<b class="fc">&nbsp;        if (quantity.compareTo(walletQuantity) &gt; 0) {</b>
+<b class="nc">&nbsp;            Log.i(WalletController.class.getName(), &quot;próba nadsprzeda¿y&quot;);</b>
+<b class="nc">&nbsp;            Toast.makeText(context, &quot;Sell all&quot;, Toast.LENGTH_LONG).show();</b>
+<b class="nc">&nbsp;            repo.sellAll(currencyId);</b>
+<b class="nc">&nbsp;            refreshViewOffline();</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        repo.addTransaction(currencyId, quantity.negate(), amount.negate());</b>
+<b class="fc">&nbsp;        repo.updateWalletEntry(currencyId, quantity.negate(), amount.negate());</b>
+<b class="fc">&nbsp;        if (refreshView) refreshViewOffline();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @NotNull
+&nbsp;    private BigDecimal getBigDecimalFromView(View popupView, int viewId) {
+<b class="fc">&nbsp;        TextView etQuantity = popupView.findViewById(viewId);</b>
+<b class="fc">&nbsp;        return new BigDecimal(etQuantity.getText().toString());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;TransactionDto&gt; getTransactions(String currencyId) {
+<b class="nc">&nbsp;        return repo.getTransactions(currencyId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void sellAll(String currencyId) {
+<b class="nc">&nbsp;        repo.sellAll(currencyId);</b>
+<b class="nc">&nbsp;        refreshViewOffline();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void addTableRow(TableLayout table, WalletDto dto) {
+<b class="nc">&nbsp;        TableRow tableRow = new TableRow(context);</b>
+<b class="nc">&nbsp;        tableRow.setLayoutParams(new TableRow.LayoutParams(</b>
+&nbsp;                TableRow.LayoutParams.MATCH_PARENT,
+&nbsp;                TableRow.LayoutParams.WRAP_CONTENT));
+&nbsp;
+<b class="nc">&nbsp;        TextView currency = new TextView(context);</b>
+<b class="nc">&nbsp;        currency.setText(dto.getCurrencyId());</b>
+<b class="nc">&nbsp;        tableRow.addView(currency);</b>
+&nbsp;
+<b class="nc">&nbsp;        TextView avgPrice = new TextView(context);</b>
+<b class="nc">&nbsp;        avgPrice.setText(dto.getAvgPrice());</b>
+<b class="nc">&nbsp;        tableRow.addView(avgPrice);</b>
+&nbsp;
+<b class="nc">&nbsp;        TextView change = new TextView(context);</b>
+<b class="nc">&nbsp;        change.setText(dto.getChange());</b>
+<b class="nc">&nbsp;        tableRow.addView(change);</b>
+&nbsp;
+<b class="nc">&nbsp;        TextView profit = new TextView(context);</b>
+<b class="nc">&nbsp;        profit.setText(dto.getProfit().toString());</b>
+<b class="nc">&nbsp;        tableRow.addView(profit);</b>
+&nbsp;
+<b class="nc">&nbsp;        Button btn = new Button(context);</b>
+<b class="nc">&nbsp;        btn.setText(&quot;:::&quot;);</b>
+<b class="nc">&nbsp;        btn.setTag(R.string.currencyId, dto.getCurrencyId());</b>
+<b class="nc">&nbsp;        btn.setTag(R.string.price, dto.getFormattedPrice());</b>
+<b class="nc">&nbsp;        btn.setBackground(context.getResources().getDrawable(R.drawable.rounded_button));</b>
+<b class="nc">&nbsp;        btn.setOnClickListener(clickListener);</b>
+<b class="nc">&nbsp;        tableRow.addView(btn);</b>
+&nbsp;
+<b class="nc">&nbsp;        table.addView(tableRow, new TableLayout.LayoutParams(</b>
+&nbsp;                TableLayout.LayoutParams.MATCH_PARENT,
+&nbsp;                TableLayout.LayoutParams.WRAP_CONTENT));
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void fillBalance(View view, List&lt;WalletDto&gt; walletData) {
+<b class="fc">&nbsp;        TextView tvBalance = view.findViewById(R.id.tv_balance);</b>
+<b class="fc">&nbsp;        BigDecimal balance = walletData.stream()</b>
+<b class="fc">&nbsp;                .map(WalletDto::getProfit)</b>
+<b class="fc">&nbsp;                .reduce(BigDecimal.ZERO, BigDecimal::add);</b>
+<b class="fc">&nbsp;        tvBalance.setText(String.valueOf(balance.longValue()));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-30 16:39</div>
+</div>
+</body>
+</html>

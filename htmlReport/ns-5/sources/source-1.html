@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > LocalFileAccess</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.tridoo.wallettracker.wallet</a>
+</div>
+
+<h1>Coverage Summary for Class: LocalFileAccess (com.tridoo.wallettracker.wallet)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LocalFileAccess</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    18,2%
+  </span>
+  <span class="absValue">
+    (6/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.tridoo.wallettracker.wallet;
+&nbsp;
+&nbsp;import android.content.Context;
+&nbsp;import android.util.Log;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class LocalFileAccess {
+&nbsp;    private final Context ctx;
+&nbsp;
+<b class="fc">&nbsp;    public LocalFileAccess(Context ctx) {</b>
+<b class="fc">&nbsp;        this.ctx = ctx;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;String&gt; readSavedData(String fileName) {
+<b class="fc">&nbsp;        List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            if (!ctx.getFileStreamPath(fileName).exists()) {</b>
+<b class="fc">&nbsp;                Log.i(LocalFileAccess.class.getName(), &quot;brak pliku&quot;);</b>
+<b class="fc">&nbsp;                return result;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            FileInputStream fileInput = ctx.openFileInput(fileName);</b>
+<b class="nc">&nbsp;            InputStreamReader inputStream = new InputStreamReader(fileInput);</b>
+<b class="nc">&nbsp;            BufferedReader reader = new BufferedReader(inputStream);</b>
+&nbsp;
+<b class="nc">&nbsp;            String line = reader.readLine();</b>
+<b class="nc">&nbsp;            while (line != null) {</b>
+<b class="nc">&nbsp;                result.add(line);</b>
+<b class="nc">&nbsp;                line = reader.readLine();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            inputStream.close();</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            Log.e(LocalFileAccess.class.getName(), &quot;IOException&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void writeData(String data, String fileName, int mode) {
+&nbsp;        try {
+<b class="nc">&nbsp;            FileOutputStream fOut = ctx.openFileOutput(fileName, mode);</b>
+<b class="nc">&nbsp;            OutputStreamWriter osw = new OutputStreamWriter(fOut);</b>
+<b class="nc">&nbsp;            osw.write(data + System.lineSeparator());</b>
+<b class="nc">&nbsp;            osw.flush();</b>
+<b class="nc">&nbsp;            osw.close();</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            Log.e(LocalFileAccess.class.getName(), &quot;writeData&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        Log.i(LocalFileAccess.class.getName(), &quot;sukces &quot; + fileName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteFile(String fileName) {
+<b class="nc">&nbsp;        File file = new File(ctx.getFilesDir(), fileName);</b>
+<b class="nc">&nbsp;        if (!file.exists()) {</b>
+<b class="nc">&nbsp;            Log.w(LocalFileAccess.class.getName(), &quot;brak pliku: &quot; + fileName);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (file.delete()) {</b>
+<b class="nc">&nbsp;            Log.i(LocalFileAccess.class.getName(), &quot;plik usuniêty: &quot; + fileName);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            Log.w(LocalFileAccess.class.getName(), &quot;plik nieusuniêty: &quot; + fileName);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-30 16:39</div>
+</div>
+</body>
+</html>

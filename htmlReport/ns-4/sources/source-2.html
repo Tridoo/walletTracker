@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PriceTextChangedListener</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.tridoo.wallettracker.view</a>
+</div>
+
+<h1>Coverage Summary for Class: PriceTextChangedListener (com.tridoo.wallettracker.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PriceTextChangedListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.tridoo.wallettracker.view;
+&nbsp;
+&nbsp;import android.text.Editable;
+&nbsp;import android.text.TextWatcher;
+&nbsp;import android.view.View;
+&nbsp;import android.widget.EditText;
+&nbsp;import android.widget.TextView;
+&nbsp;import com.tridoo.wallettracker.R;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;
+&nbsp;public class PriceTextChangedListener implements TextWatcher {
+&nbsp;
+&nbsp;    private final View popupView;
+&nbsp;
+<b class="nc">&nbsp;    public PriceTextChangedListener(View popupView) {</b>
+<b class="nc">&nbsp;        this.popupView = popupView;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+&nbsp;
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+<b class="nc">&nbsp;        if (!popupView.findViewById(R.id.et_price).hasFocus()</b>
+<b class="nc">&nbsp;                || charSequence.length() == 0) return;</b>
+&nbsp;
+<b class="nc">&nbsp;        BigDecimal price = new BigDecimal(charSequence.toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        EditText etQuantity = popupView.findViewById(R.id.et_quantity);</b>
+<b class="nc">&nbsp;        BigDecimal quantity = new BigDecimal(etQuantity.getText().toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        TextView etAmount = popupView.findViewById(R.id.et_amount);</b>
+<b class="nc">&nbsp;        etAmount.setText(price.multiply(quantity).toPlainString());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void afterTextChanged(Editable editable) {
+&nbsp;
+<b class="nc">&nbsp;    }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-30 16:39</div>
+</div>
+</body>
+</html>
