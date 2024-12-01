@@ -10,7 +10,7 @@ import java.time.ZoneId;
 
 public class CoingeckoUrlBuilder {
 
-    private static final String TOP_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=6&page=1&sparkline=false";
+    private static final String TOP_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false";
 
     private static final long TIME_OFFSET = 60 * 60;
 

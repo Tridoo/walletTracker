@@ -3,9 +3,6 @@ package com.tridoo.wallettracker.stock;
 import android.util.Log;
 import com.google.gson.*;
 import com.tridoo.wallettracker.common.TimeRange;
-import org.json.JSONArray;
-import org.json.JSONException;
-//import org.json.JSONObject;
 
 import java.io.BufferedReader;
 
@@ -19,6 +16,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,6 +25,8 @@ import androidx.core.util.Pair;
 public class StockReaderImpl implements StockReader {
 
     private static final String EMPTY_STRING = "";
+
+    private static final Set<String> STABLE_COINS = Set.of("tether", "usd-coin");
 
     @Override
     public List<Pair<String, BigDecimal>> getTopCryptocurrencies() {
@@ -104,7 +104,14 @@ public class StockReaderImpl implements StockReader {
     private Optional<Pair<String, BigDecimal>> getJObject(JsonArray cryptocurrencies, int i) {
         try {
             JsonObject obj = cryptocurrencies.get(i).getAsJsonObject();
-            return Optional.of(new Pair<>(obj.get("id").getAsString(), new BigDecimal(obj.get("current_price").getAsString())));
+            String cryptoId = obj.get("id").getAsString();
+
+            if (STABLE_COINS.contains(cryptoId)) {
+                Log.d(StockReader.class.getName(), "stable ");
+                return Optional.empty();
+            }
+
+            return Optional.of(new Pair<>(cryptoId, new BigDecimal(obj.get("current_price").getAsString())));
         } catch (Exception e) {
             Log.e(StockReader.class.getName(), "JSONException", e);
             return Optional.empty();
